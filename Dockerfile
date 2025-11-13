@@ -1,18 +1,20 @@
-# Use Python 3.10 (compatible with TensorFlow 2.10)
+# Use Python base image
 FROM python:3.10-slim
 
 # Set working directory
 WORKDIR /app
 
-# Copy all project files
+# Install system dependencies (for OpenCV)
+RUN apt-get update && apt-get install -y libgl1
+
+# Copy all files
 COPY . .
 
-# Upgrade pip and install dependencies
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose the web port
+# Expose port
 EXPOSE 10000
 
-# Command to run your Flask app
-CMD ["gunicorn", "main:app", "--bind", "0.0.0.0:10000"]
+# Run the app
+CMD ["gunicorn", "main:app"]
